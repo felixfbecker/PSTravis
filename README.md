@@ -19,6 +19,9 @@ Install-Module PSTravis
 - `Get-TravisCruiseControlFeedUrl`
 - `Enable-TravisRepository`
 - `Add-TravisEnvironmentVariable`
+- `Get-TravisEnvironmentVariable`
+- `Update-TravisEnvironmentVariable`
+- `Remove-TravisEnvironmentVariable`
 - `Sync-TravisRepositories`
 - `Start-TravisRepositorySync`
 - `Wait-TravisRepositorySync`
