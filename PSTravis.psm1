@@ -168,6 +168,8 @@ function Add-TravisEnvironmentVariable {
         [Parameter(Mandatory, Position = 2)]
         [string] $Value,
         [Parameter()]
+        [string] $Branch,
+        [Parameter()]
         [switch] $Public,
 
         [Parameter(Mandatory)]
@@ -175,12 +177,16 @@ function Add-TravisEnvironmentVariable {
         [Security.SecureString] $Token
     )
     process {
+        $body = @{
+            'env_var.name'   = $Name
+            'env_var.value'  = $value
+            'env_var.public' = [bool]$Public
+        }
+        if ($Branch) {
+            $body['env_var.branch'] = $Branch
+        }
         if ($PSCmdlet.ShouldProcess("Adding Travis environment variable `"$Name`" to repository `"$Slug`"", "Add Travis environment variable `"$Name`" to repository `"$Slug`"?", "Confirm")) {
-            Invoke-TravisAPIRequest -Method POST "/repo/$([Uri]::EscapeDataString($Slug))/env_vars" -Token $Token -Body @{
-                'env_var.name'   = $Name
-                'env_var.value'  = $value
-                'env_var.public' = [bool]$Public
-            }
+            Invoke-TravisAPIRequest -Method POST "/repo/$([Uri]::EscapeDataString($Slug))/env_vars" -Token $Token -Body $body
         }
     }
 }
@@ -226,6 +232,8 @@ function Update-TravisEnvironmentVariable {
         [Parameter(ValueFromPipelineByPropertyName)]
         [string] $Value,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string] $Branch,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch] $Public,
 
         [Parameter(Mandatory)]
@@ -239,6 +247,9 @@ function Update-TravisEnvironmentVariable {
         }
         if ($Value) {
             $body['env_var.value'] = $value
+        }
+        if ($Branch) {
+            $body['env_var.branch'] = $Branch
         }
         if ($PSBoundParameters.ContainsKey('Public')) {
             $body['env_var.public'] = [bool]$Public
