@@ -186,7 +186,10 @@ function Add-TravisEnvironmentVariable {
             $body['env_var.branch'] = $Branch
         }
         if ($PSCmdlet.ShouldProcess("Adding Travis environment variable `"$Name`" to repository `"$Slug`"", "Add Travis environment variable `"$Name`" to repository `"$Slug`"?", "Confirm")) {
-            Invoke-TravisAPIRequest -Method POST "/repo/$([Uri]::EscapeDataString($Slug))/env_vars" -Token $Token -Body $body
+            Invoke-TravisAPIRequest -Method POST "/repo/$([Uri]::EscapeDataString($Slug))/env_vars" -Token $Token -Body $body| ForEach-Object {
+                Add-Member -InputObject $_ -MemberType NoteProperty -Name Slug -Value $Slug
+                $_
+            }
         }
     }
 }
@@ -261,7 +264,10 @@ function Update-TravisEnvironmentVariable {
             $body['env_var.public'] = [bool]$Public
         }
         if ($PSCmdlet.ShouldProcess("Updating Travis environment variable `e[1m$Id`e[0m for repository `e[1m$Slug`e[0m", "Update Travis environment variable `e[1m$Id`e[0m for repository `e[1m$Slug`e[0m?", "Confirm")) {
-            Invoke-TravisAPIRequest -Method PATCH "/repo/$([Uri]::EscapeDataString($Slug))/env_var/$Id" -Token $Token -Body $body
+            Invoke-TravisAPIRequest -Method PATCH "/repo/$([Uri]::EscapeDataString($Slug))/env_var/$Id" -Token $Token -Body $body | ForEach-Object {
+                Add-Member -InputObject $_ -MemberType NoteProperty -Name Slug -Value $Slug
+                $_
+            }
         }
     }
 }
