@@ -194,6 +194,10 @@ function Add-TravisEnvironmentVariable {
 function Get-TravisEnvironmentVariable {
     [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName, DontShow)]
+        [Alias('@type')]
+        [string] $InputType,
+
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string] $Slug,
 
@@ -206,7 +210,7 @@ function Get-TravisEnvironmentVariable {
     )
     process {
         $url = "/repo/$([Uri]::EscapeDataString($Slug))/env_var"
-        if ($Id) {
+        if ($Id -and $InputType -eq 'env_var') {
             $url += "/$id"
         } else {
             $url += "s"
@@ -221,19 +225,21 @@ function Get-TravisEnvironmentVariable {
 function Update-TravisEnvironmentVariable {
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
         [string] $Id,
 
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [Parameter()]
         [string] $Name,
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [Parameter()]
         [string] $Value,
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [Parameter()]
         [string] $Branch,
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [Parameter()]
         [switch] $Public,
 
         [Parameter(Mandatory)]
@@ -254,7 +260,7 @@ function Update-TravisEnvironmentVariable {
         if ($PSBoundParameters.ContainsKey('Public')) {
             $body['env_var.public'] = [bool]$Public
         }
-        if ($PSCmdlet.ShouldProcess("Updating Travis environment variable `"$Name`" for repository `"$Slug`"", "Update Travis environment variable `"$Name`" for repository `"$Slug`"?", "Confirm")) {
+        if ($PSCmdlet.ShouldProcess("Updating Travis environment variable `e[1m$Id`e[0m for repository `e[1m$Slug`e[0m", "Update Travis environment variable `e[1m$Id`e[0m for repository `e[1m$Slug`e[0m?", "Confirm")) {
             Invoke-TravisAPIRequest -Method PATCH "/repo/$([Uri]::EscapeDataString($Slug))/env_var/$Id" -Token $Token -Body $body
         }
     }
