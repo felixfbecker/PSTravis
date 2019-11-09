@@ -71,12 +71,16 @@
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
         'Add-TravisEnvironmentVariable',
+        'Add-TravisEnvironmentVariable',
         'Enable-TravisRepository',
         'Get-TravisCruiseControlFeedUrl',
+        'Get-TravisEnvironmentVariable',
         'Get-TravisRepository',
         'Get-TravisUser',
+        'Remove-TravisEnvironmentVariable'
         'Start-TravisRepositorySync',
         'Sync-TravisRepositories',
+        'Update-TravisEnvironmentVariable',
         'Wait-TravisRepositorySync'
     )
 
